@@ -3,6 +3,7 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from crawlScrapyOfTravel.items import TuNiuItem
+from crawlScrapyOfTravel.util import SpiderUtil
 
 
 class CrawloftuniuSpider(CrawlSpider):
@@ -10,30 +11,30 @@ class CrawloftuniuSpider(CrawlSpider):
     allowed_domains = ['tuniu.com']
     start_urls = ['http://s.tuniu.com/search_complex/whole-yz-0-yunnan/1']
 
-   # 每页翻页的匹配规则
+    # 每页翻页的匹配规则
     pagelink = LinkExtractor(allow=(r"/search_complex/whole-yz-0-yunnan/\d+"))
     # 每条记录的匹配规则
     contentlink = LinkExtractor(allow=(r"//www.tuniu.com/tour/\d+"))
 
     rules = (
         # 本案例的url被web服务器篡改，需要调用process_links来处理提取出来的url
-        Rule(pagelink, process_links = "deal_links"),
-        Rule(contentlink, callback = "parse_item")
+        Rule(pagelink),  # , process_links = "deal_links"
+        Rule(contentlink, callback="parse_item")
     )
 
     # links 是当前response里提取出来的链接列表
-    def deal_links(self, links):
-        for each in links:
-            each.url ="http://s.tuniu.com"+ each
-        return links
+    # def deal_links(self, links):
+    #     for each in links:
+    #         each.url ="http://s.tuniu.com"+ each
+    #     return links
 
     def parse_item(self, response):
         item = TuNiuItem()
-        full_title = response.xpath('//h1[@class="resource-title"]/strong/text()').extract()[0]
+        full_title = SpiderUtil.listIsEmpty(response.xpath('//h1[@class="resource-title"]/strong/text()').extract())[0]
         # 标题
-        item['title'] = full_title.split('>')[0]
+        item['title'] = full_title.split('>')[0] + '>'
         # 简介
-        item['introduction'] =  full_title.split('>')[1]
+        item['introduction'] = full_title.split('>')[1]
         # 详细描述
         # item['detail'] = response.xpath()
         # 营业时间
@@ -43,10 +44,9 @@ class CrawloftuniuSpider(CrawlSpider):
         # 酒店
         # item['hotel'] = response.xpath()
         # 价格
-        item['price'] = response.xpath('//span[@class="price-quantity"]/span[@class="price-number"]/text()').extract()[0]
-        # 满意度
-        item['satisfaction'] =  response.xpath('//div[@class="resource-statisfaction"]/a[@class="resource-statisfaction-number"]/text()').extract()[0]
-        # 评价条数
+        item['price'] = SpiderUtil.listIsEmpty(
+            response.xpath('//span[@class="price-quantity"]/span[@class="price-number"]/text()').extract())[0]
+        # 评价
         # item['comment'] = response.xpath()
         # 星级
         item['star'] = len(response.xpath('//*[@id="J_basisStar"]/i').extract())
@@ -57,15 +57,33 @@ class CrawloftuniuSpider(CrawlSpider):
         else:
             item['brand'] = ' '
 
-        numberOfpeople = response.xpath('//*[@class="resource-people-number"]/text()').extract()[0]
-        # 出游人数
-        item['numberOfout'] = numberOfpeople[0]
-        # 评价人数
-        item['numberOfcomment'] = numberOfpeople[1]
-        #链接
-        item['url'] =  response.url
+        # 如果是新品满意度、出行人数和评论人数都没有，为数据库默认值
+        new_product = response.xpath('//div[@class="resource-people-product"]/text()').extract()
+        if len(new_product) != 0:
+            # 新品
+            item['isnew'] = 0
+            item['numberOfout'] = 0
+            item['numberOfcomment'] = 0
+            item['satisfaction'] = ' '
+        else:
+            # 旧品
+            item['isnew'] = 1
+            numberOfpeople = SpiderUtil.listIsEmpty(
+                response.xpath('//*[@class="resource-people-number"]/text()').extract())
+            # 出游人数
+            item['numberOfout'] = numberOfpeople[0]
+            # 评价人数
+            item['numberOfcomment'] = numberOfpeople[1]
+            # 满意度
+            item['satisfaction'] = SpiderUtil.listIsEmpty(response.xpath(
+                '//div[@class="resource-statisfaction"]/a[@class="resource-statisfaction-number"]/text()').extract())[0]
+
+        # 链接
+        item['url'] = response.url
         # 游玩天数
-        item['dayOfplay'] = response.xpath('//div[@id="J_Detail"]/div[@class="detail-sections"]/div[@class="J_DetailFeature section-box detail-feature"]/div[@class="section-box-body"]/div[@class="section-box-content"][1]/div[@class="detail-feature-brief"]/div[@class="detail-feature-brief-item"][1]/strong/text()').extract()[0]
+        item['dayOfplay'] = response.xpath(
+            '//div[@id="J_Detail"]/div[@class="detail-sections"]/div[@class="J_DetailFeature section-box detail-feature"]/div[@class="section-box-body"]/div[@class="section-box-content"][1]/div[@class="detail-feature-brief"]/div[@class="detail-feature-brief-item"][1]/strong/text()').extract()[
+            0]
 
         # # 内容，先使用有图片情况下的匹配规则，如果有内容，返回所有内容的列表集合
         # content = response.xpath('//div[@class="contentext"]/text()').extract()
@@ -79,4 +97,3 @@ class CrawloftuniuSpider(CrawlSpider):
         # item['url'] = response.url
 
         yield item
-

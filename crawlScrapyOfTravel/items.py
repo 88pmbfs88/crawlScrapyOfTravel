@@ -39,3 +39,5 @@ class TuNiuItem(scrapy.Item):
     dayOfplay = scrapy.Field()
     #链接
     url =  scrapy.Field()
+    #新品
+    isnew = scrapy.Field()

@@ -30,8 +30,8 @@ class CrawlscrapyoftravelPipeline(object):
     def process_item(self, item, spider):
         try:
             self.cursor.execute(
-                """insert into tuniusource(title, introduction, price, satisfaction ,star, brand, numberOfout, numberOfcomment, url, dayOfplay)
-                value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                """insert into tuniusource(title, introduction, price, satisfaction ,star, brand, numberOfout, numberOfcomment, url, dayOfplay, isnew)
+                value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (item['title'],
                  item['introduction'],
                  item['price'],
@@ -41,8 +41,8 @@ class CrawlscrapyoftravelPipeline(object):
                  item['numberOfout'],
                  item['numberOfcomment'],
                  item['url'],
-                 item['dayOfplay']
-                 # item[''],
+                 item['dayOfplay'],
+                 item['isnew']
                  # item[''],
                  # item['']),
             ))
