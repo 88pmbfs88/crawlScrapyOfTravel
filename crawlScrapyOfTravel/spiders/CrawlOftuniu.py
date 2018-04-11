@@ -71,9 +71,9 @@ class CrawloftuniuSpider(CrawlSpider):
             numberOfpeople = SpiderUtil.listIsEmpty(
                 response.xpath('//*[@class="resource-people-number"]/text()').extract())
             # 出游人数
-            item['numberOfout'] = numberOfpeople[0]
+            item['numberOfout'] = SpiderUtil.emptyStrToZero(numberOfpeople[0])
             # 评价人数
-            item['numberOfcomment'] = numberOfpeople[1]
+            item['numberOfcomment'] = SpiderUtil.emptyStrToZero(numberOfpeople[1])
             # 满意度
             item['satisfaction'] = SpiderUtil.listIsEmpty(response.xpath(
                 '//div[@class="resource-statisfaction"]/a[@class="resource-statisfaction-number"]/text()').extract())[0]

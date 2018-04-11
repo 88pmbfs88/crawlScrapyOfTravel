@@ -16,3 +16,14 @@ class SpiderUtil(object):
         else:
             return data
             raise '传入的值为非列表数据类型！！！'
+
+    @staticmethod
+    def emptyStrToZero(data):
+        """
+        空字符串转换为0
+        :param data:
+        :return:
+        """
+        if type(data) == str and data.strip() =='':
+            data = 0
+            return data
