@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from crawlScrapyOfTravel import settings
-import mysql.connector
+# import mysql.connector
+import MySQLdb
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
@@ -11,18 +12,25 @@ import mysql.connector
 class CrawlscrapyoftravelPipeline(object):
 
     def __init__(self):
-         config = {
-            'host': settings.MYSQL_HOST,
-            'user': settings.MYSQL_USER,
-            'password': settings.MYSQL_PASSWD,
-            'port': settings.MYSQL_PORT,
-            'database': settings.MYSQL_DBNAME,
-            'charset': 'utf8',
-            'buffered': True
-            }
+         # config = {
+         #    'host': settings.MYSQL_HOST,
+         #    'user': settings.MYSQL_USER,
+         #    'password': settings.MYSQL_PASSWD,
+         #    'port': settings.MYSQL_PORT,
+         #    'database': settings.MYSQL_DBNAME,
+         #    'charset': 'utf8',
+         #    'buffered': True
+         #    }
          try:
-            self.cnn = mysql.connector.connect(**config)
-         except mysql.connector.Error as e:
+            # self.cnn = mysql.connector.connect(**config)
+            self.cnn = MySQLdb.connect(host=settings.MYSQL_HOST,
+                                       port=settings.MYSQL_PORT,
+                                       user=settings.MYSQL_USER,
+                                       passwd=settings.MYSQL_PASSWD,
+                                       db=settings.MYSQL_DBNAME,
+                                       charset="utf8")
+
+         except Exception as e:
             print 'connect fails!{}'.format(e)
          # 通过cursor执行增删查改
          self.cursor = self.cnn.cursor()
