@@ -41,3 +41,5 @@ class TuNiuItem(scrapy.Item):
     url =  scrapy.Field()
     #新品
     isnew = scrapy.Field()
+    #出行方式
+    mode = scrapy.Field()
