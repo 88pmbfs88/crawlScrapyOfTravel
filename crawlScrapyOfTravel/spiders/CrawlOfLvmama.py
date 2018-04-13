@@ -47,7 +47,11 @@ class CrawloflvmamaSpider(CrawlSpider):
         # 标题
         item['title'] = SpiderUtil.listIsEmpty(response.xpath("//h1/b/text()").extract())[0]
         # 简介
-        item['introduction'] = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())[0].strip()
+        item['introduction'] = ''
+        jj = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())
+        for j in jj:
+            item['introduction'] += SpiderUtil.superstrip(j)
+        # item['introduction'] = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())[0].strip()
         # 详细描述
         detail = SpiderUtil.listIsEmpty(response.xpath("//div[@class='product-summary']/ul/li/text()").extract())
         item['detail']=''
@@ -55,7 +59,7 @@ class CrawloflvmamaSpider(CrawlSpider):
             if li.strip() == '':
                 continue
             else:
-                item['detail'] += "["+li.strip()+"]"
+                item['detail'] += "["+SpiderUtil.superstrip(li)+"]"
 
         # 营业时间
         # item['business_time'] = response.xpath()
@@ -70,15 +74,15 @@ class CrawloflvmamaSpider(CrawlSpider):
         # item['comment'] = response.xpath()
         # 星级
         stars = SpiderUtil.listIsEmpty(response.xpath("//h1[@class='detail_product_tit']/a/span/@class").extract())[0]
-        if stars.find("one"):
+        if "one" in stars:
             item['star'] = 1
-        elif stars.find("two"):
+        elif "two" in stars:
             item['star'] = 2
-        elif stars.find("three"):
+        elif "three" in stars:
             item['star'] = 3
-        elif stars.find("four"):
+        elif "four" in stars:
             item['star'] = 4
-        elif stars.find("five"):
+        elif "five" in stars:
             item['star'] = 5
         else:
             item['star'] = 0

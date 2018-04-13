@@ -27,3 +27,15 @@ class SpiderUtil(object):
         if type(data) == str and data.strip() =='':
             data = 0
             return data
+        else:
+            return int(data)
+
+
+    @staticmethod
+    def superstrip(data):
+        """
+        去除空格
+        :param data:
+        :return:
+        """
+        return data.replace("\r","").replace("\n","").replace("\t","").replace(" ","").strip()

@@ -52,8 +52,8 @@ class CrawlscrapyoftravelPipeline(object):
         elif spider.name == "CrawlOflvmama":
              try:
                 self.cursor.execute(
-                    """insert into lvmama_source(title, introduction, price, satisfaction ,star, detail, numberOfout, numberOfcomment, url, dayOfplay, mode)
-                    value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                    """insert into lvmama_source(title, introduction, price, satisfaction ,star, detail, numberOfout, numberOfcomment, url, mode)
+                    value (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                     (item['title'],
                      item['introduction'],
                      item['price'],
@@ -63,7 +63,6 @@ class CrawlscrapyoftravelPipeline(object):
                      item['numberOfout'],
                      item['numberOfcomment'],
                      item['url'],
-                     item['dayOfplay'],
                      item['mode']
                      # item[''],
                      # item['']),
