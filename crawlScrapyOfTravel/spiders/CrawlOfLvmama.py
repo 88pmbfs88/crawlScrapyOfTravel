@@ -12,22 +12,15 @@ class CrawloflvmamaSpider(CrawlSpider):
     start_urls = ['http://s.lvmama.com/route/H56K321000?keyword=yunnan&k=0#list']
 
     # 每页翻页的匹配规则
- #   pagelink = LinkExtractor(attrs="onclick",process_value="pagelinkvalue")allow=(r"[A-Za-z0-9]+\?keyword=.*#list"),
-
     pagelink = LinkExtractor(allow=(r"[A-Za-z0-9]+\?keyword=.*#list"),attrs="onclick")#,process_value="pagelinkvalue"
     # 每条记录的匹配规则
-    contentlink = LinkExtractor(allow=(r"http://dujia.lvmama.com/[a-z]+/[a-z0-9]+-D56"))
+    contentlink = LinkExtractor(allow=(r"http://dujia.lvmama.com/[a-z]+/([a-z0-9]+-D56|\d+)"))
 
     rules = (
         # 本案例的url被web服务器篡改，需要调用process_links来处理提取出来的url
-        Rule(pagelink, process_links="deal_pagelinks", follow=True),  #
+        Rule(pagelink, process_links="deal_pagelinks", follow=True),
         Rule(contentlink, callback="parse_item", follow=True)
     )
-
-    # def pagelinkvalue(self, value):
-    #     m= re.search("routeSelectAjax\('s<lvmama<com>route>([A-Za-z0-9]+\?keyword=yunnan&tabType=route#list)'\)", value)
-    #     if m:
-    #         return m.group(1)
 
     def deal_pagelinks(self, links):
         for pagelink in links:
@@ -51,7 +44,6 @@ class CrawloflvmamaSpider(CrawlSpider):
         jj = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())
         for j in jj:
             item['introduction'] += SpiderUtil.superstrip(j)
-        # item['introduction'] = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())[0].strip()
         # 详细描述
         detail = SpiderUtil.listIsEmpty(response.xpath("//div[@class='product-summary']/ul/li/text()").extract())
         item['detail']=''
@@ -98,11 +90,11 @@ class CrawloflvmamaSpider(CrawlSpider):
         # 链接
         item['url'] = response.url
 
-        if response.url.find("group"):
+        if "group" in response.url:
             item['mode'] = "跟团游"
-        elif response.url.find("local"):
+        elif "local" in response.url:
             item['mode'] = "落地团"
-        elif response.url.find("free"):
+        elif "free" in response.url:
             item['mode'] = "自由行"
         else:
             item['mode'] = ""
