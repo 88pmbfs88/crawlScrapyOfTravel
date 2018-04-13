@@ -73,16 +73,16 @@ ITEM_PIPELINES = {
 }
 
 # start MySQL database configure setting
-# MYSQL_HOST = 'localhost'
-# MYSQL_DBNAME = 'treaval'
-# MYSQL_USER = 'root'
-# MYSQL_PASSWD = 'root'
-# MYSQL_PORT = 3306
-MYSQL_HOST = '192.168.123.193'
+MYSQL_HOST = 'localhost'
 MYSQL_DBNAME = 'treaval'
 MYSQL_USER = 'root'
 MYSQL_PASSWD = 'root'
 MYSQL_PORT = 3306
+# MYSQL_HOST = '192.168.123.193'
+# MYSQL_DBNAME = 'treaval'
+# MYSQL_USER = 'root'
+# MYSQL_PASSWD = 'root'
+# MYSQL_PORT = 3306
 # end of MySQL database configure setting
 
 # Enable and configure the AutoThrottle extension (disabled by default)

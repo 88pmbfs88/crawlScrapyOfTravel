@@ -8,7 +8,7 @@
 import scrapy
 
 
-class TuNiuItem(scrapy.Item):
+class TreavalItem(scrapy.Item):
     # 标题
     title = scrapy.Field()
     # 简介

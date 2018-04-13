@@ -2,7 +2,7 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-from crawlScrapyOfTravel.items import TuNiuItem
+from crawlScrapyOfTravel.items import TreavalItem
 from crawlScrapyOfTravel.util import SpiderUtil
 import re
 
@@ -43,13 +43,14 @@ class CrawloflvmamaSpider(CrawlSpider):
         return links
 
     def parse_item(self, response):
-        item = TuNiuItem()
+        item = TreavalItem()
         # 标题
         item['title'] = SpiderUtil.listIsEmpty(response.xpath("//h1/b/text()").extract())[0]
         # 简介
         item['introduction'] = SpiderUtil.listIsEmpty(response.xpath("//h1/text()").extract())[0].strip()
         # 详细描述
         detail = SpiderUtil.listIsEmpty(response.xpath("//div[@class='product-summary']/ul/li/text()").extract())
+        item['detail']=''
         for li in detail:
             if li.strip() == '':
                 continue
@@ -69,15 +70,15 @@ class CrawloflvmamaSpider(CrawlSpider):
         # item['comment'] = response.xpath()
         # 星级
         stars = SpiderUtil.listIsEmpty(response.xpath("//h1[@class='detail_product_tit']/a/span/@class").extract())[0]
-        if stars.contains("one"):
+        if stars.find("one"):
             item['star'] = 1
-        elif stars.contains("two"):
+        elif stars.find("two"):
             item['star'] = 2
-        elif stars.contains("three"):
+        elif stars.find("three"):
             item['star'] = 3
-        elif stars.contains("four"):
+        elif stars.find("four"):
             item['star'] = 4
-        elif stars.contains("five"):
+        elif stars.find("five"):
             item['star'] = 5
         else:
             item['star'] = 0
@@ -93,11 +94,11 @@ class CrawloflvmamaSpider(CrawlSpider):
         # 链接
         item['url'] = response.url
 
-        if response.url.contains("group"):
+        if response.url.find("group"):
             item['mode'] = "跟团游"
-        elif response.url.contains("local"):
+        elif response.url.find("local"):
             item['mode'] = "落地团"
-        elif response.url.contains("free"):
+        elif response.url.find("free"):
             item['mode'] = "自由行"
         else:
             item['mode'] = ""

@@ -2,7 +2,7 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
-from crawlScrapyOfTravel.items import TuNiuItem
+from crawlScrapyOfTravel.items import TreavalItem
 from crawlScrapyOfTravel.util import SpiderUtil
 
 
@@ -29,7 +29,7 @@ class CrawloftuniuSpider(CrawlSpider):
     #     return links
 
     def parse_item(self, response):
-        item = TuNiuItem()
+        item = TreavalItem()
         full_title = SpiderUtil.listIsEmpty(response.xpath('//h1[@class="resource-title"]/strong/text()').extract())[0]
         # 标题
         item['title'] = full_title.split('>')[0] + '>'
